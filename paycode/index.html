@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <title>向 TomyJan 付款</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+	
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, SF UI Text, Arial, Microsoft YaHei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+        }
+        .title {
+            background-color: #fff;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-height: 25%;
+        }
+        .content {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+        .hidden-qrcode {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0; /* 使图层透明不可见 */
+            z-index: 2;
+        }
+
+        #alipay { background-color: #027aff; display: none; }
+        #wepay { background-color: #2ba245; display: none; }
+        #qq { background-color: #4c97d5; display: none; }
+        #other { background-color: #ff7055; display: none; }
+
+        img.qrcode { max-width: 60%; margin: 1em 0; }
+        h1 { margin: 0.5em 0; font-size: 1.8em; }
+        h3 { margin: 2em 0; font-size: 1.3em; }
+    </style>
+</head>
+<body>
+    <div id="alipay" class="container">
+        <div class="title">
+            <img id="alipay-logo" width="48" height="48" alt="支付宝图标">
+            <h1>支付宝</h1>
+        </div>
+        <div class="content">
+            <div class="hidden-qrcode"><img id="alipay-qr-hidden" class="hiddenqrcode" alt="支付宝二维码"></div>
+            <img id="alipay-qr" class="qrcode" alt="支付宝二维码">
+            <h3>长按识别二维码，向 TomyJan 付款</h3>
+        </div>
+    </div>
+    <div id="wepay" class="container">
+        <div class="title">
+            <img id="wepay-logo" width="48" height="48" alt="微信图标">
+            <h1>微信支付</h1>
+        </div>
+        <div class="content">
+            <div class="hidden-qrcode"><img id="wepay-qr-hidden" class="hiddenqrcode" alt="微信支付二维码"></div>
+            <img id="wepay-qr" class="qrcode" alt="微信支付二维码">
+            <h3>长按识别二维码，向 TomyJan 付款</h3>
+        </div>
+    </div>
+    <div id="qq" class="container">
+        <div class="title">
+            <img id="qq-logo" width="48" height="48" alt="QQ图标">
+            <h1>QQ 支付</h1>
+        </div>
+        <div class="content">
+            <div class="hidden-qrcode"><img id="qq-qr-hidden" class="hiddenqrcode" alt="QQ 支付二维码"></div>
+            <img id="qq-qr" class="qrcode" alt="QQ 支付二维码">
+            <h3>长按识别二维码，向 TomyJan 付款</h3>
+        </div>
+    </div>
+    <div id="other" class="container">
+        <div class="title">
+            <img id="other-logo" width="48" height="48" alt="支付宝图标">
+            <h1>不支持的 APP</h1>
+        </div>
+        <div class="content">
+            <div class="hidden-qrcode"><img id="other-qr-hidden" class="hiddenqrcode" alt="其他二维码"></div>
+            <img id="other-qr" class="qrcode" alt="其他二维码">
+            <h3>请使用支付宝/微信/QQ客户端扫码付款</h3>
+        </div>
+    </div>
+
+    <script>
+        const config = {
+            alipay: {
+                logo: '#',
+                qrcode: 'https://cdn.tomys.top/common/img/paycode/AliPay.png',
+                link: 'https://qr.alipay.com/tsx16126ki2qxd2fquzar04',
+            },
+            wepay: {
+                logo: 'https://cdn.tomys.top/common/img/paycode/WeChat_logo.jpg',
+                qrcode: 'https://cdn.tomys.top/common/img/paycode/WeChat_Management.png',
+            },
+            qq: {
+                logo: 'https://cdn.tomys.top/common/img/paycode/QQ_logo.jpg',
+                qrcode: 'https://cdn.tomys.top/common/img/paycode/QQPay.png',
+            },
+            other: {
+                logo: 'https://cdn.tomys.top/common/img/paycode/RMB.jpg',
+                qrcode: 'https://cdn.tomys.top/common/img/paycode/PayCode.png',
+            },
+        }
+        const ua = navigator.userAgent;
+        
+        if (ua.indexOf('AlipayClient/') > -1) {
+            window.location.href = config.alipay.link;
+        } else if (ua.indexOf('MicroMessenger/') > -1) {
+            document.getElementById('wepay-logo').src = config.wepay.logo;
+            document.getElementById('wepay-qr').src = config.wepay.qrcode;
+            document.getElementById('wepay-qr-hidden').src = config.wepay.qrcode;
+            document.getElementById('wepay').style.display = 'flex';
+        } else if (ua.indexOf('QQ/') > -1) {
+            document.getElementById('qq-logo').src = config.qq.logo;
+            document.getElementById('qq-qr').src = config.qq.qrcode;
+            document.getElementById('qq-qr-hidden').src = config.qq.qrcode;
+            document.getElementById('qq').style.display = 'flex';
+        } else {
+            document.getElementById('other-logo').src = config.other.logo;
+            document.getElementById('other-qr').src = config.other.qrcode;
+            document.getElementById('other-qr-hidden').src = config.other.qrcode;
+            document.getElementById('other').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
