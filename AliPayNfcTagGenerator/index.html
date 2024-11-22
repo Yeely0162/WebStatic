@@ -354,6 +354,8 @@
     };
 
     nextStep.onclick = () => {
+      nextStep.disabled = true;
+      nextStep.innerText = '处理中...';
       uploadSection.style.display = 'none';
       finalStep.style.display = 'block';
 
@@ -383,9 +385,9 @@
           const downloadAnchorNode = document.createElement('a');
           downloadAnchorNode.setAttribute("href", dataStr);
           if (uploadSection.dataset.type === 'bothBtn') {
-            downloadAnchorNode.setAttribute("download", `付款码+红包码_${date}_NFCToolsPRO.json`);
+            downloadAnchorNode.setAttribute("download", `收款码+红包码_${date}_NFCToolsPRO.json`);
           } else if (uploadSection.dataset.type === 'paymentBtn') {
-            downloadAnchorNode.setAttribute("download", `付款码_${date}_NFCToolsPRO.json`);
+            downloadAnchorNode.setAttribute("download", `收款码_${date}_NFCToolsPRO.json`);
           } else if (uploadSection.dataset.type === 'redPacketBtn') {
             downloadAnchorNode.setAttribute("download", `红包码_${date}_NFCToolsPRO.json`);
           }
@@ -396,6 +398,8 @@
       } catch (error) {
         Swal.fire('错误', '呜呜呜，生成文件出错了: ' + error.message, 'error');
       }
+      nextStep.innerText = '下载标签文件';
+      nextStep.disabled = false;
     };
   </script>
 </body>
