@@ -1,0 +1,2 @@
+# WebStatic
+Some little tools.
