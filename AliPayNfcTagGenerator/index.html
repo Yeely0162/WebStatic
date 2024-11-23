@@ -25,6 +25,10 @@
       color: #333;
     }
 
+    p {
+      margin: 8px 6px 8px 6px;
+    }
+
     .hidden {
       display: none;
     }
@@ -80,6 +84,38 @@
       background-color: #f7f7f7;
     }
 
+    input[type="checkbox"] {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      margin: -2px 10px 0 6px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      background-color: #f7f7f7;
+      cursor: pointer;
+      display: inline-block;
+      vertical-align: middle;
+      position: relative;
+    }
+
+    input[type="checkbox"]:checked {
+      background-color: #027AFF;
+      border-color: #027AFF;
+    }
+
+    input[type="checkbox"]:checked::after {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 10px;
+      border: solid #fff;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+      position: absolute;
+      top: -0.5px;
+      left: 4px;
+    }
+
     /* 按钮样式用于链接 */
     .button-link {
       text-align: center;
@@ -122,11 +158,12 @@
       text-decoration: underline;
     }
 
-    ol, ul {
+    ol {
       margin-top: 0;
       padding-left: 25px;
     }
-    ol li, ul li {
+
+    ol li {
       margin-bottom: 5px;
     }
 
@@ -192,37 +229,39 @@
 
 <body>
   <div id="buttonSection">
-    <p>&nbsp;&nbsp;欢迎喵！你要生成什么呢？</p>
-    <p>&nbsp;&nbsp;开始之前, 请看以下几点: </p>
-    <ul>
-      <li>这玩意只有申请过官方碰一下的才可以用</li>
-      <li>所以主要的用途是你可以保存一个带金额/备注的收款码来自由生成</li>
-    </ul>
+    <p>欢迎喵！你要生成什么呢？</p>
     <button id="paymentBtn">生成收款码</button>
     <button id="redPacketBtn">生成红包码</button>
     <button id="bothBtn">生成两个码</button>
-    <p>&nbsp;&nbsp;纯本地运行，不会上传你的数据！</p>
+    <p>纯本地运行，不会上传你的数据！</p>
   </div>
 
   <div id="uploadSection" class="hidden">
     <div id="uploadSectionPayment" class="hidden">
-      <p>&nbsp;&nbsp;上传或者粘贴一下你的收款码吧～</p>
+      <p>上传或者粘贴一下你的收款码吧～</p>
+      <p>可以上传任何收款码，甚至包括指定金额/备注的～</p>
       <input type="file" id="fileInputPayment" accept="image/*">
       <input type="text" id="linkInputPayment" placeholder="上传图片或粘贴收款码链接">
+      <P>如果没申请过官方碰一下，请勾选</P>
+      <input type="checkbox" id="withoutNotTag">去除碰一下标识</input>
+      <p>勾选将无法享受碰一下支付优惠</p>
     </div>
+    <div id="uploadSectionMiddle" class="hidden" style="height: 16px;"></div>
     <div id="uploadSectionRedPack" class="hidden">
-      <p>&nbsp;&nbsp;上传或者粘贴一下你的红包码吧～</p>
+      <p>上传或者粘贴一下你的红包码吧～</p>
+      <p>仅支持碰一下收款码附带的红包码哦～</p>
       <input type="file" id="fileInputRedPack" accept="image/*">
       <input type="text" id="linkInputRedPack" placeholder="上传图片或粘贴红包码链接">
     </div>
     <button id="nextStep" disabled>生成</button>
+    <button onclick="location.reload()">返回</button>
   </div>
 
   <div id="finalStep" class="hidden">
-    <p>&nbsp;&nbsp;大成功！现在可以戳我下载了喔～</p>
+    <p>大成功！现在可以戳我下载了喔～</p>
     <button id="downloadBtn">下载标签文件</button>
     <button onclick="location.reload()">再生一个</button>
-    <p>&nbsp;&nbsp;不会使用？我来助你！</p>
+    <p>不会使用？我来助你！</p>
     <ol>
       <li>下载安装并运行 NFC Tools PRO，这还需要我教吗？</li>
       <li>点击 写 => 更多的选择 导入Tag标签配置文件，选择你刚刚下载的文件！</li>
@@ -254,6 +293,7 @@
     const linkInputPayment = document.getElementById('linkInputPayment');
     const fileInputRedPack = document.getElementById('fileInputRedPack');
     const linkInputRedPack = document.getElementById('linkInputRedPack');
+    const wuthoutNotTag = document.getElementById('withoutNotTag');
     const nextStep = document.getElementById('nextStep');
     const downloadBtn = document.getElementById('downloadBtn');
 
@@ -264,6 +304,7 @@
         uploadSection.dataset.type = button.id;
         if (button.id === 'bothBtn') {
           uploadSectionPayment.style.display = 'block';
+          uploadSectionMiddle.style.display = 'block';
           uploadSectionRedPack.style.display = 'block';
         } else if (button.id === 'paymentBtn') {
           uploadSectionPayment.style.display = 'block';
@@ -374,17 +415,29 @@
 
       try {
         let data;
-        let SKM_TMPL = '{"tag.profile.name":"收款码SKM_TMPL_VAR_DATE","tag.profile.date":"SKM_TMPL_VAR_DATE","tag.profile.length":2,"tag.profile.size":252,"tag.profile.data":[{"tag.profile.fields":{"field1":"render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","field2":"1"},"tag.profile.config":{"requestType":"2","itemRecordExtra":"","itemDescription":"https:\/\/render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","itemRecord":"https:\/\/render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp"}},{"tag.profile.fields":{"field1":"com.eg.android.AlipayGphone"},"tag.profile.config":{"requestType":"3","itemRecordExtra":"","itemDescription":"com.eg.android.AlipayGphone","itemRecord":"com.eg.android.AlipayGphone"}}]}'
-        let HBM_TMPL = '{"tag.profile.name":"红包码HBM_TMPL_VAR_DATE","tag.profile.date":"HBM_TMPL_VAR_DATE","tag.profile.length":2,"tag.profile.size":254,"tag.profile.data":[{"tag.profile.fields":{"field1":"render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","field2":"1"},"tag.profile.config":{"requestType":"2","itemRecordExtra":"","itemDescription":"https:\/\/render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","itemRecord":"https:\/\/render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp"}},{"tag.profile.fields":{"field1":"com.eg.android.AlipayGphone"},"tag.profile.config":{"requestType":"3","itemRecordExtra":"","itemDescription":"com.eg.android.AlipayGphone","itemRecord":"com.eg.android.AlipayGphone"}}]}'
+        let SKM_TMPL = '{"tag.profile.name":"收款码SKM_TMPL_WITHOUT_NOTTAG_SKM_TMPL_VAR_DATE","tag.profile.date":"SKM_TMPL_VAR_DATE","tag.profile.length":2,"tag.profile.size":252,"tag.profile.data":[{"tag.profile.fields":{"field1":"render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","field2":"1"},"tag.profile.config":{"requestType":"2","itemRecordExtra":"","itemDescription":"https:\/\/render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","itemRecord":"https:\/\/render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp"}},{"tag.profile.fields":{"field1":"com.eg.android.AlipayGphone"},"tag.profile.config":{"requestType":"3","itemRecordExtra":"","itemDescription":"com.eg.android.AlipayGphone","itemRecord":"com.eg.android.AlipayGphone"}}]}'
+        let HBM_TMPL = '{"tag.profile.name":"红包码_HBM_TMPL_VAR_DATE","tag.profile.date":"HBM_TMPL_VAR_DATE","tag.profile.length":2,"tag.profile.size":254,"tag.profile.data":[{"tag.profile.fields":{"field1":"render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","field2":"1"},"tag.profile.config":{"requestType":"2","itemRecordExtra":"","itemDescription":"https:\/\/render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","itemRecord":"https:\/\/render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp"}},{"tag.profile.fields":{"field1":"com.eg.android.AlipayGphone"},"tag.profile.config":{"requestType":"3","itemRecordExtra":"","itemDescription":"com.eg.android.AlipayGphone","itemRecord":"com.eg.android.AlipayGphone"}}]}'
         // 获取UTC+8时间, 并转换为 20241122T134756 这样的格式
         const date = new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').replace('T', 'T').split('.')[0];
         console.log(date);
+        let withoutNotTagTip = ''
+        if (withoutNotTag.checked) {
+          withoutNotTagTip = '_无标识';
+        }
         if (uploadSection.dataset.type === 'bothBtn') {
           SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_VAR_DATE/g, date).replace(/SKM_TMPL_VAR_CODE/g, linkInputPayment.value.replace('https://qr.alipay.com/', ''));
+          SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_WITHOUT_NOTTAG/g, withoutNotTagTip);
+          if (wuthoutNotTag.checked) {
+            SKM_TMPL = SKM_TMPL.replace(/%253FnoT%253Dntagtqp/g, '');
+          }
           HBM_TMPL = HBM_TMPL.replace(/HBM_TMPL_VAR_DATE/g, date).replace(/HBM_TMPL_VAR_CODE/g, linkInputRedPack.value.replace('https://qr.alipay.com/', ''));
           data = [JSON.parse(SKM_TMPL), JSON.parse(HBM_TMPL)];
         } else if (uploadSection.dataset.type === 'paymentBtn') {
           SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_VAR_DATE/g, date).replace(/SKM_TMPL_VAR_CODE/g, linkInputPayment.value.replace('https://qr.alipay.com/', ''));
+          SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_WITHOUT_NOTTAG/g, withoutNotTagTip);
+          if (wuthoutNotTag.checked) {
+            SKM_TMPL = SKM_TMPL.replace(/%253FnoT%253Dntagtqp/g, '');
+          }
           data = [JSON.parse(SKM_TMPL)];
         } else if (uploadSection.dataset.type === 'redPacketBtn') {
           // data = { linkRedPack: linkInputRedPack.value };
@@ -398,9 +451,9 @@
           const downloadAnchorNode = document.createElement('a');
           downloadAnchorNode.setAttribute("href", dataStr);
           if (uploadSection.dataset.type === 'bothBtn') {
-            downloadAnchorNode.setAttribute("download", `收款码+红包码_${date}_NFCToolsPRO.json`);
+            downloadAnchorNode.setAttribute("download", `收款码${withoutNotTagTip}+红包码_${date}_NFCToolsPRO.json`);
           } else if (uploadSection.dataset.type === 'paymentBtn') {
-            downloadAnchorNode.setAttribute("download", `收款码_${date}_NFCToolsPRO.json`);
+            downloadAnchorNode.setAttribute("download", `收款码${withoutNotTagTip}_${date}_NFCToolsPRO.json`);
           } else if (uploadSection.dataset.type === 'redPacketBtn') {
             downloadAnchorNode.setAttribute("download", `红包码_${date}_NFCToolsPRO.json`);
           }
