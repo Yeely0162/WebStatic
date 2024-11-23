@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
@@ -16,8 +16,9 @@
             padding: 0;
             font-family: MiSans;
         }
-	
-        html, body {
+
+        html,
+        body {
             height: 100%;
             width: 100%;
             color: #333;
@@ -25,6 +26,7 @@
             justify-content: center;
             align-items: center;
         }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -32,6 +34,7 @@
             width: 100%;
             text-align: center;
         }
+
         .title {
             background-color: #fff;
             flex: 1;
@@ -41,6 +44,7 @@
             align-items: center;
             max-height: 25%;
         }
+
         .content {
             flex: 2;
             display: flex;
@@ -51,6 +55,7 @@
             position: relative;
             z-index: 1;
         }
+
         .hidden-qrcode {
             position: absolute;
             top: 0;
@@ -60,21 +65,49 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0; /* 使图层透明不可见 */
+            opacity: 0;
+            /* 使图层透明不可见 */
             z-index: 2;
         }
 
-        #alipay { background-color: #027aff; display: none; }
-        #wepay { background-color: #2ba245; display: none; }
-        #qq { background-color: #4c97d5; display: none; }
-        #other { background-color: #ff7055; display: none; }
+        #alipay {
+            background-color: #027aff;
+            display: none;
+        }
 
-        img.qrcode { max-width: 60%; margin: 1em 0; }
-        h1 { margin: 0.5em 0; font-size: 1.8em; }
-        h3 { margin: 2em 0; font-size: 1.3em; }
+        #wepay {
+            background-color: #2ba245;
+            display: none;
+        }
+
+        #qq {
+            background-color: #4c97d5;
+            display: none;
+        }
+
+        #other {
+            background-color: #ff7055;
+            display: none;
+        }
+
+        img.qrcode {
+            max-width: 60%;
+            margin: 1em 0;
+        }
+
+        h1 {
+            margin: 0.5em 0;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            margin: 2em 0;
+            font-size: 1.3em;
+        }
     </style>
     <script defer src="https://umami.amoe.cc/script.js" data-website-id="db912f6a-7957-4d87-92d3-398312d43f1f"></script>
 </head>
+
 <body>
     <div id="alipay" class="container">
         <div class="title">
@@ -142,7 +175,7 @@
             },
         }
         const ua = navigator.userAgent;
-        
+
         if (ua.indexOf('AlipayClient/') > -1) {
             window.location.href = config.alipay.link;
         } else if (ua.indexOf('MicroMessenger/') > -1) {
@@ -163,4 +196,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +14,12 @@
             box-sizing: border-box;
             font-family: MiSans;
         }
+
         body {
             background-color: #f4f4f4;
             color: #333;
         }
+
         p {
             font-size: 20px;
             font-weight: 500;
@@ -24,9 +27,11 @@
             color: #333;
             text-align: center;
         }
+
         .hidden {
             display: none;
         }
+
         .container {
             display: none;
             width: 100%;
@@ -37,6 +42,7 @@
             flex-direction: column;
             background-color: #fff;
         }
+
         .default-tip {
             display: flex;
             justify-content: center;
@@ -44,11 +50,13 @@
             height: 100vh;
             background-color: #f4f4f4;
         }
+
         .qr-code img {
             width: 240px;
             height: 240px;
             margin-bottom: 20px;
         }
+
         .highlight {
             font-weight: bold;
             color: #ff5722;
@@ -60,15 +68,19 @@
                 background-color: #1c1c1c;
                 color: #f4f4f4;
             }
+
             p {
                 color: #f4f4f4;
             }
+
             .container {
                 background-color: #2c2c2c;
             }
+
             .default-tip {
                 background-color: #1c1c1c;
             }
+
             .highlight {
                 color: #ff9d4d;
             }
@@ -76,6 +88,7 @@
     </style>
     <script defer src="https://umami.amoe.cc/script.js" data-website-id="db912f6a-7957-4d87-92d3-398312d43f1f"></script>
 </head>
+
 <body>
     <div class="default-tip" id="default-tip">
         <p>加载中，请稍候...</p>
@@ -98,7 +111,7 @@
             const dftTip = document.getElementById('default-tip');
             const pcTip = document.getElementById('pc-tip');
             const aliTip = document.getElementById('alipayapp-tip');
-            
+
             dftTip.style.display = 'none';
 
             if (isPC) {
@@ -120,4 +133,5 @@
         window.addEventListener('load', checkBrowser);
     </script>
 </body>
+
 </html>
