@@ -122,6 +122,14 @@
       text-decoration: underline;
     }
 
+    ol, ul {
+      margin-top: 0;
+      padding-left: 25px;
+    }
+    ol li, ul li {
+      margin-bottom: 5px;
+    }
+
     /* 媒体查询，应用深色模式 */
     @media (prefers-color-scheme: dark) {
       body {
@@ -185,6 +193,11 @@
 <body>
   <div id="buttonSection">
     <p>&nbsp;&nbsp;欢迎喵！你要生成什么呢？</p>
+    <p>&nbsp;&nbsp;开始之前, 请看以下几点: </p>
+    <ul>
+      <li>这玩意只有申请过官方碰一下的才可以用</li>
+      <li>所以主要的用途是你可以保存一个带金额/备注的收款码来自由生成</li>
+    </ul>
     <button id="paymentBtn">生成收款码</button>
     <button id="redPacketBtn">生成红包码</button>
     <button id="bothBtn">生成两个码</button>
