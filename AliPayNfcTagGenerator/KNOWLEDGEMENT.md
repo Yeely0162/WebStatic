@@ -12,7 +12,7 @@
 
 ## <ALIPAY_TAG_TMPL_WITHOUT_NOTTAG>
 
-不带有 noT 参数的提示语, 默认为 _无标识
+不带有 noT 参数的提示语, 默认为 -无标识
 
 
 ## <ALIPAY_TAG_TMPL_DATE>

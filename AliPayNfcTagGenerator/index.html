@@ -241,6 +241,8 @@
     <button id="paymentBtn">生成收款码</button>
     <button id="redPacketBtn">生成红包码</button>
     <button id="bothBtn">生成两个码</button>
+    <p>要不...整点儿好玩的？</p>
+    <button id="customBtn">自定义链接</button>
     <p>纯本地运行，不会上传你的数据！</p>
   </div>
 
@@ -260,6 +262,11 @@
       <p>仅支持碰一下收款码附带的红包码哦～</p>
       <input type="file" id="fileInputRedPack" accept="image/*">
       <input type="text" id="linkInputRedPack" placeholder="上传图片或粘贴红包码链接">
+    </div>
+    <div id="uploadSectionCustom" class="hidden">
+      <p>上传或粘贴你的链接吧～</p>
+      <input type="file" id="fileInputCustom" accept="image/*">
+      <input type="text" id="linkInputCustom" placeholder="上传图片或粘贴二维码">
     </div>
     <button id="nextStep" disabled>生成</button>
     <button onclick="location.reload()">返回</button>
@@ -300,6 +307,8 @@
     const linkInputPayment = document.getElementById('linkInputPayment');
     const fileInputRedPack = document.getElementById('fileInputRedPack');
     const linkInputRedPack = document.getElementById('linkInputRedPack');
+    const fileInputCustom = document.getElementById('fileInputCustom');
+    const linkInputCustom = document.getElementById('linkInputCustom');
     const withoutNotTag = document.getElementById('withoutNotTag');
     const nextStep = document.getElementById('nextStep');
     const downloadBtn = document.getElementById('downloadBtn');
@@ -317,6 +326,8 @@
           uploadSectionPayment.style.display = 'block';
         } else if (button.id === 'redPacketBtn') {
           uploadSectionRedPack.style.display = 'block';
+        } else if (button.id === 'customBtn') {
+          uploadSectionCustom.style.display = 'block';
         } else {
           Swal.fire('错误', '未知的按钮类型喵，你对我做了什么？', 'error');
         }
@@ -414,6 +425,39 @@
       fileInputRedPack.value = '';
     };
 
+    fileInputCustom.onchange = () => {
+      try {
+        const file = fileInputCustom.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const dataURL = e.target.result;
+          const img = new Image();
+          img.onload = function () {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0);
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+            if (code) {
+              linkInputCustom.value = code.data;
+              nextStep.disabled = false;
+            } else {
+              linkInputCustom.value = '';
+              nextStep.disabled = true;
+              Swal.fire('错误', '糟糕，二维码识别失败，检查下文件吧～', 'error');
+            }
+          };
+          img.src = dataURL;
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        Swal.fire('错误', '文件读取发生错误: ' + error.message, 'error');
+      }
+      fileInputCustom.value = '';
+    };
+    
     nextStep.onclick = () => {
       nextStep.disabled = true;
       nextStep.innerText = '处理中...';
@@ -428,7 +472,7 @@
       console.log(date);
       let withoutNotTagTip = ''
       if (withoutNotTag.checked) {
-        withoutNotTagTip = '_无标识';
+        withoutNotTagTip = '-无标识';
       }
 
       function generateSKM() {
@@ -460,6 +504,18 @@
         return HBM_TMPL;
       }
 
+      function generateCustom() {
+        let CUSTOM_TMPL = ALIPAY_TAG_TMPL;
+        CUSTOM_TMPL = CUSTOM_TMPL.replace(/<ALIPAY_TAG_TMPL_NAME>/g, '自定义码');
+        CUSTOM_TMPL = CUSTOM_TMPL.replace(/<ALIPAY_TAG_TMPL_DATE>/g, date);
+        CUSTOM_TMPL = CUSTOM_TMPL.replace(/<ALIPAY_TAG_TMPL_WITHOUT_NOTTAG>/g, ''); // 自定义码默认不加标识
+        let CUSTOM_URL = ALIPAY_TAG_TMPL_LINK.replace(/<ALIPAY_TAG_TMPL_URL_TYPE>/g, 'dc0'); // 走点餐码通道
+        CUSTOM_URL = CUSTOM_URL.replace(/<ALIPAY_TAG_QRLINK_TMPL>/g, encodeURIComponent(encodeURIComponent(linkInputCustom.value)));
+        CUSTOM_TMPL = CUSTOM_TMPL.replace(/<ALIPAY_TAG_TMPL_URL_TMPL>/g, CUSTOM_URL);
+        CUSTOM_TMPL = CUSTOM_TMPL.replace(/<ALIPAY_TAG_TMPL_LENGTH>/g, CUSTOM_URL.length + 50);
+        return CUSTOM_TMPL;
+      }
+
       try {
         let data;
         if (uploadSection.dataset.type === 'bothBtn') {
@@ -473,6 +529,9 @@
         } else if (uploadSection.dataset.type === 'redPacketBtn') {
           let HBM_TMPL = generateHBM();
           data = [JSON.parse(HBM_TMPL)];
+        } else if (uploadSection.dataset.type === 'customBtn') {
+          let CUSTOM_TMPL = generateCustom();
+          data = [JSON.parse(CUSTOM_TMPL)];
         } else {
           throw new Error('未知的上传类型喵');
         }
@@ -481,11 +540,15 @@
           const downloadAnchorNode = document.createElement('a');
           downloadAnchorNode.setAttribute("href", dataStr);
           if (uploadSection.dataset.type === 'bothBtn') {
-            downloadAnchorNode.setAttribute("download", `收款码${withoutNotTagTip}+红包码_${date}_NFCToolsPRO.json`);
+            downloadAnchorNode.setAttribute("download", `支付宝_收款码${withoutNotTagTip}+红包码_${date}_NFCToolsPRO.json`);
           } else if (uploadSection.dataset.type === 'paymentBtn') {
-            downloadAnchorNode.setAttribute("download", `收款码${withoutNotTagTip}_${date}_NFCToolsPRO.json`);
+            downloadAnchorNode.setAttribute("download", `支付宝_收款码${withoutNotTagTip}_${date}_NFCToolsPRO.json`);
           } else if (uploadSection.dataset.type === 'redPacketBtn') {
-            downloadAnchorNode.setAttribute("download", `红包码_${date}_NFCToolsPRO.json`);
+            downloadAnchorNode.setAttribute("download", `支付宝_红包码_${date}_NFCToolsPRO.json`);
+          } else if (uploadSection.dataset.type === 'customBtn') {
+            downloadAnchorNode.setAttribute("download", `支付宝_自定义码_${date}_NFCToolsPRO.json`);
+          } else {
+            throw new Error('未知的上传类型喵');
           }
           document.body.appendChild(downloadAnchorNode);
           downloadAnchorNode.click();
