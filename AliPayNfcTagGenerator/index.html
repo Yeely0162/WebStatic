@@ -246,17 +246,17 @@
 
   <div id="uploadSection" class="hidden">
     <div id="uploadSectionPayment" class="hidden">
-      <p>上传或者粘贴一下你的收款码吧～</p>
+      <p>上传或粘贴你的收款码吧～</p>
       <p>可以上传任何收款码，甚至包括指定金额/备注的～</p>
       <input type="file" id="fileInputPayment" accept="image/*">
       <input type="text" id="linkInputPayment" placeholder="上传图片或粘贴收款码链接">
-      <P>如果没申请过官方碰一下，请勾选</P>
+      <P>若未申请过官方碰一下，请勾选</P>
       <input type="checkbox" id="withoutNotTag">去除碰一下标识</input>
       <p>勾选将无法享受碰一下支付优惠</p>
     </div>
     <div id="uploadSectionMiddle" class="hidden" style="height: 16px;"></div>
     <div id="uploadSectionRedPack" class="hidden">
-      <p>上传或者粘贴一下你的红包码吧～</p>
+      <p>上传或粘贴你的红包码吧～</p>
       <p>仅支持碰一下收款码附带的红包码哦～</p>
       <input type="file" id="fileInputRedPack" accept="image/*">
       <input type="text" id="linkInputRedPack" placeholder="上传图片或粘贴红包码链接">
@@ -300,7 +300,7 @@
     const linkInputPayment = document.getElementById('linkInputPayment');
     const fileInputRedPack = document.getElementById('fileInputRedPack');
     const linkInputRedPack = document.getElementById('linkInputRedPack');
-    const wuthoutNotTag = document.getElementById('withoutNotTag');
+    const withoutNotTag = document.getElementById('withoutNotTag');
     const nextStep = document.getElementById('nextStep');
     const downloadBtn = document.getElementById('downloadBtn');
 
@@ -419,36 +419,59 @@
       nextStep.innerText = '处理中...';
       uploadSection.style.display = 'none';
       finalStep.style.display = 'block';
+      const ALIPAY_TAG_TMPL = '{"tag.profile.name":"支付宝_<ALIPAY_TAG_TMPL_NAME><ALIPAY_TAG_TMPL_WITHOUT_NOTTAG>_<ALIPAY_TAG_TMPL_DATE>","tag.profile.date":"<ALIPAY_TAG_TMPL_DATE>","tag.profile.length":2,"tag.profile.size":<ALIPAY_TAG_TMPL_LENGTH>,"tag.profile.data":[{"tag.profile.fields":{"field1":"<ALIPAY_TAG_TMPL_URL_TMPL>","field2":"1"},"tag.profile.config":{"requestType":"2","itemRecordExtra":"","itemDescription":"https://<ALIPAY_TAG_TMPL_URL_TMPL>","itemRecord":"https://<ALIPAY_TAG_TMPL_URL_TMPL>"}},{"tag.profile.fields":{"field1":"com.eg.android.AlipayGphone"},"tag.profile.config":{"requestType":"3","itemRecordExtra":"","itemDescription":"com.eg.android.AlipayGphone","itemRecord":"com.eg.android.AlipayGphone"}}]}';
+      const ALIPAY_TAG_TMPL_LINK = 'render.alipay.com/p/s/ulink/<ALIPAY_TAG_TMPL_URL_TYPE>?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3D<ALIPAY_TAG_QRLINK_TMPL>';
+      const ALIPAY_TAG_QRLINK_TMPL = 'https%253A%252F%252Fqr.alipay.com%252F<ALIPAY_TAG_TMPL_URL_TARGET_CODE>%253FnoT%253Dntagtqp';
+
+      // 获取UTC+8时间, 并转换为 20241122T134756 这样的格式
+      const date = new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').replace('T', 'T').split('.')[0];
+      console.log(date);
+      let withoutNotTagTip = ''
+      if (withoutNotTag.checked) {
+        withoutNotTagTip = '_无标识';
+      }
+
+      function generateSKM() {
+        let SKM_TMPL = ALIPAY_TAG_TMPL;
+        SKM_TMPL = SKM_TMPL.replace(/<ALIPAY_TAG_TMPL_NAME>/g, '收款码');
+        SKM_TMPL = SKM_TMPL.replace(/<ALIPAY_TAG_TMPL_DATE>/g, date);
+        SKM_TMPL = SKM_TMPL.replace(/<ALIPAY_TAG_TMPL_WITHOUT_NOTTAG>/g, withoutNotTagTip);
+        let SKM_URL = ALIPAY_TAG_TMPL_LINK.replace(/<ALIPAY_TAG_TMPL_URL_TYPE>/g, 'sn');
+        SKM_URL = SKM_URL.replace(/<ALIPAY_TAG_QRLINK_TMPL>/g, ALIPAY_TAG_QRLINK_TMPL);
+        SKM_URL = SKM_URL.replace(/<ALIPAY_TAG_TMPL_URL_TARGET_CODE>/g, linkInputPayment.value.replace('https://qr.alipay.com/', ''));
+        if (withoutNotTag.checked) {
+          SKM_URL = SKM_URL.replace(/%253FnoT%253Dntagtqp/g, '');
+        }
+        SKM_TMPL = SKM_TMPL.replace(/<ALIPAY_TAG_TMPL_URL_TMPL>/g, SKM_URL);
+        SKM_TMPL = SKM_TMPL.replace(/<ALIPAY_TAG_TMPL_LENGTH>/g, SKM_URL.length + 50);
+        return SKM_TMPL;
+      }
+
+      function generateHBM() {
+        let HBM_TMPL = ALIPAY_TAG_TMPL;
+        HBM_TMPL = HBM_TMPL.replace(/<ALIPAY_TAG_TMPL_NAME>/g, '红包码');
+        HBM_TMPL = HBM_TMPL.replace(/<ALIPAY_TAG_TMPL_DATE>/g, date);
+        HBM_TMPL = HBM_TMPL.replace(/<ALIPAY_TAG_TMPL_WITHOUT_NOTTAG>/g, ''); // 红包码不支持无标识
+        let HBM_URL = ALIPAY_TAG_TMPL_LINK.replace(/<ALIPAY_TAG_TMPL_URL_TYPE>/g, 'nrps');
+        HBM_URL = HBM_URL.replace(/<ALIPAY_TAG_QRLINK_TMPL>/g, ALIPAY_TAG_QRLINK_TMPL);
+        HBM_URL = HBM_URL.replace(/<ALIPAY_TAG_TMPL_URL_TARGET_CODE>/g, linkInputRedPack.value.replace('https://qr.alipay.com/', ''));
+        HBM_TMPL = HBM_TMPL.replace(/<ALIPAY_TAG_TMPL_URL_TMPL>/g, HBM_URL);
+        HBM_TMPL = HBM_TMPL.replace(/<ALIPAY_TAG_TMPL_LENGTH>/g, HBM_URL.length + 50);
+        return HBM_TMPL;
+      }
 
       try {
         let data;
-        let SKM_TMPL = '{"tag.profile.name":"收款码SKM_TMPL_WITHOUT_NOTTAG_SKM_TMPL_VAR_DATE","tag.profile.date":"SKM_TMPL_VAR_DATE","tag.profile.length":2,"tag.profile.size":252,"tag.profile.data":[{"tag.profile.fields":{"field1":"render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","field2":"1"},"tag.profile.config":{"requestType":"2","itemRecordExtra":"","itemDescription":"https:\/\/render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","itemRecord":"https:\/\/render.alipay.com\/p\/s\/ulink\/sn?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FSKM_TMPL_VAR_CODE%253FnoT%253Dntagtqp"}},{"tag.profile.fields":{"field1":"com.eg.android.AlipayGphone"},"tag.profile.config":{"requestType":"3","itemRecordExtra":"","itemDescription":"com.eg.android.AlipayGphone","itemRecord":"com.eg.android.AlipayGphone"}}]}'
-        let HBM_TMPL = '{"tag.profile.name":"红包码_HBM_TMPL_VAR_DATE","tag.profile.date":"HBM_TMPL_VAR_DATE","tag.profile.length":2,"tag.profile.size":254,"tag.profile.data":[{"tag.profile.fields":{"field1":"render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","field2":"1"},"tag.profile.config":{"requestType":"2","itemRecordExtra":"","itemDescription":"https:\/\/render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp","itemRecord":"https:\/\/render.alipay.com\/p\/s\/ulink\/nrps?s=dc&scheme=alipay%3A%2F%2Fnfc%2Fapp%3Fid%3D10000007%26actionType%3Droute%26codeContent%3Dhttps%253A%252F%252Fqr.alipay.com%252FHBM_TMPL_VAR_CODE%253FnoT%253Dntagtqp"}},{"tag.profile.fields":{"field1":"com.eg.android.AlipayGphone"},"tag.profile.config":{"requestType":"3","itemRecordExtra":"","itemDescription":"com.eg.android.AlipayGphone","itemRecord":"com.eg.android.AlipayGphone"}}]}'
-        // 获取UTC+8时间, 并转换为 20241122T134756 这样的格式
-        const date = new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').replace('T', 'T').split('.')[0];
-        console.log(date);
-        let withoutNotTagTip = ''
-        if (withoutNotTag.checked) {
-          withoutNotTagTip = '_无标识';
-        }
         if (uploadSection.dataset.type === 'bothBtn') {
-          SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_VAR_DATE/g, date).replace(/SKM_TMPL_VAR_CODE/g, linkInputPayment.value.replace('https://qr.alipay.com/', ''));
-          SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_WITHOUT_NOTTAG/g, withoutNotTagTip);
-          if (wuthoutNotTag.checked) {
-            SKM_TMPL = SKM_TMPL.replace(/%253FnoT%253Dntagtqp/g, '');
-          }
-          HBM_TMPL = HBM_TMPL.replace(/HBM_TMPL_VAR_DATE/g, date).replace(/HBM_TMPL_VAR_CODE/g, linkInputRedPack.value.replace('https://qr.alipay.com/', ''));
+          let SKM_TMPL = generateSKM();
+          let HBM_TMPL = generateHBM();
           data = [JSON.parse(SKM_TMPL), JSON.parse(HBM_TMPL)];
         } else if (uploadSection.dataset.type === 'paymentBtn') {
-          SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_VAR_DATE/g, date).replace(/SKM_TMPL_VAR_CODE/g, linkInputPayment.value.replace('https://qr.alipay.com/', ''));
-          SKM_TMPL = SKM_TMPL.replace(/SKM_TMPL_WITHOUT_NOTTAG/g, withoutNotTagTip);
-          if (wuthoutNotTag.checked) {
-            SKM_TMPL = SKM_TMPL.replace(/%253FnoT%253Dntagtqp/g, '');
-          }
+          let SKM_TMPL = generateSKM();
+          console.log(SKM_TMPL);
           data = [JSON.parse(SKM_TMPL)];
         } else if (uploadSection.dataset.type === 'redPacketBtn') {
-          // data = { linkRedPack: linkInputRedPack.value };
-          HBM_TMPL = HBM_TMPL.replace(/HBM_TMPL_VAR_DATE/g, date).replace(/HBM_TMPL_VAR_CODE/g, linkInputRedPack.value.replace('https://qr.alipay.com/', ''));
+          let HBM_TMPL = generateHBM();
           data = [JSON.parse(HBM_TMPL)];
         } else {
           throw new Error('未知的上传类型喵');
