@@ -433,8 +433,8 @@
       }
       fileInputCustom.value = '';
     };
-    
-    linkInputPayment.addEventListener('blur', function() {
+
+    linkInputPayment.addEventListener('blur', function () {
       if (/https:\/\/qr\.alipay\.com\/[a-z0-9]{23}/.test(linkInputPayment.value)) {
         if (uploadSection.dataset.type === 'bothBtn' && linkInputRedPack.value && /https:\/\/qr\.alipay\.com\/[a-z0-9]{23}/.test(linkInputRedPack.value)) {
           nextStep.disabled = false;
@@ -449,7 +449,7 @@
       }
     });
 
-    linkInputRedPack.addEventListener('blur', function() {
+    linkInputRedPack.addEventListener('blur', function () {
       if (/https:\/\/qr\.alipay\.com\/[a-z0-9]{23}/.test(linkInputRedPack.value)) {
         if (uploadSection.dataset.type === 'bothBtn' && linkInputPayment.value && /https:\/\/qr\.alipay\.com\/[a-z0-9]{23}/.test(linkInputPayment.value)) {
           nextStep.disabled = false;
@@ -467,7 +467,7 @@
       }
     });
 
-    linkInputCustom.addEventListener('blur', function() {
+    linkInputCustom.addEventListener('blur', function () {
       if (/^https?:\/\//.test(linkInputCustom.value)) {
         if (/^https?:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/.test(linkInputCustom.value)) {
           nextStep.disabled = false;
