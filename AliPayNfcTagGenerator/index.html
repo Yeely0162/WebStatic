@@ -442,8 +442,19 @@
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
             const code = jsQR(imageData.data, imageData.width, imageData.height);
             if (code) {
-              linkInputCustom.value = code.data;
-              nextStep.disabled = false;
+              if (/^https?:\/\//.test(code.data)) {
+                linkInputCustom.value = code.data;
+                if (/^https?:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/.test(code.data)) {
+                  nextStep.disabled = false;
+                  Swal.fire('提示', '在支付宝直接打开 IP 地址会有弹窗喔，考虑下吧', 'info');
+                } else {
+                  nextStep.disabled = false;
+                }
+                nextStep.disabled = false;
+              } else {
+                nextStep.disabled = true;
+                Swal.fire('错误', '上传的好像并不是链接诶，检查一下吧～', 'error');
+              }
             } else {
               linkInputCustom.value = '';
               nextStep.disabled = true;
