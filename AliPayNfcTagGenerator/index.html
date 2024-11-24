@@ -18,33 +18,33 @@
     }
 
     body {
-      padding: 20px;
-      transition: background-color 0.5s, color 0.5s;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      height: 100vh;
+      align-items: center;
       min-height: 100vh;
       margin: 0;
-      overflow: hidden;
-      /* 禁用滚动条 */
+      overflow-x: hidden;
+      overflow-y: auto;
       background-color: #fff;
       color: #333;
     }
 
-    p {
-      margin: 8px 6px 8px 6px;
-    }
-
-    .hidden {
-      display: none;
+    #contentWrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
     }
 
     #buttonSection,
     #uploadSection,
     #finalStep {
-      width: 80%;
+      width: 100%;
       max-width: 400px;
       margin: 10px auto;
       padding: 20px;
@@ -55,11 +55,14 @@
       flex-direction: column;
     }
 
+    .hidden {
+      display: none;
+    }
+
     button,
     input[type="text"],
     input[type="file"] {
       width: 100%;
-      /* 修正宽度 */
       margin: 10px 0;
       padding: 12px;
       border: none;
@@ -80,7 +83,6 @@
 
     button:disabled {
       background-color: #ccc;
-      /* 禁用按钮样式 */
       color: #666;
       cursor: not-allowed;
     }
@@ -96,7 +98,7 @@
       appearance: none;
       width: 20px;
       height: 20px;
-      margin: -2px 10px 0 6px;
+      margin: -2px 10px 0 0;
       border: 2px solid #ccc;
       border-radius: 4px;
       background-color: #f7f7f7;
@@ -124,7 +126,6 @@
       left: 4px;
     }
 
-    /* 按钮样式用于链接 */
     .button-link {
       text-align: center;
       width: 80%;
@@ -145,15 +146,13 @@
       background-color: #005BBB;
     }
 
-    /* 页脚链接样式 */
     #footerLinks {
-      position: absolute;
-      bottom: 10px;
       text-align: center;
       width: 100%;
       font-size: 14px;
       color: #555;
-      text-decoration: none;
+      padding: 10px 0;
+      margin-top: auto;
     }
 
     #footerLinks a {
@@ -236,55 +235,57 @@
 </head>
 
 <body>
-  <div id="buttonSection">
-    <p>欢迎喵！你要生成什么呢？</p>
-    <button id="paymentBtn">生成收款码</button>
-    <button id="redPacketBtn">生成红包码</button>
-    <button id="bothBtn">生成两个码</button>
-    <p>要不...整点儿好玩的？</p>
-    <button id="customBtn">自定义链接</button>
-    <p>纯本地运行，不会上传你的数据！</p>
-  </div>
+  <div id="contentWrapper">
+    <div id="buttonSection">
+      <p>欢迎喵！你要生成什么呢？</p>
+      <button id="paymentBtn">生成收款码</button>
+      <button id="redPacketBtn">生成红包码</button>
+      <button id="bothBtn">生成两个码</button>
+      <p>要不...整点儿好玩的？</p>
+      <button id="customBtn">自定义链接</button>
+      <p>纯本地运行，不会上传你的数据！</p>
+    </div>
 
-  <div id="uploadSection" class="hidden">
-    <div id="uploadSectionPayment" class="hidden">
-      <p>上传或粘贴你的收款码吧～</p>
-      <p>可以上传任何收款码，甚至包括指定金额/备注的～</p>
-      <input type="file" id="fileInputPayment" accept="image/*">
-      <input type="text" id="linkInputPayment" placeholder="上传图片或粘贴收款码链接">
-      <P>若未申请过官方碰一下，请勾选</P>
-      <input type="checkbox" id="withoutNotTag">去除碰一下标识</input>
-      <p>勾选将无法享受碰一下支付优惠</p>
+    <div id="uploadSection" class="hidden">
+      <div id="uploadSectionPayment" class="hidden">
+        <p>上传或粘贴你的收款码吧～</p>
+        <p>可以上传任何收款码，甚至包括指定金额/备注的～</p>
+        <input type="file" id="fileInputPayment" accept="image/*">
+        <input type="text" id="linkInputPayment" placeholder="上传图片或粘贴收款码链接">
+        <P>若未申请过官方碰一下，请勾选</P>
+        <input type="checkbox" id="withoutNotTag">去除碰一下标识</input>
+        <p>勾选将无法享受碰一下支付优惠</p>
+      </div>
+      <div id="uploadSectionMiddle" class="hidden" style="height: 16px;"></div>
+      <div id="uploadSectionRedPack" class="hidden">
+        <p>上传或粘贴你的红包码吧～</p>
+        <p>仅支持碰一下收款码附带的红包码哦～</p>
+        <input type="file" id="fileInputRedPack" accept="image/*">
+        <input type="text" id="linkInputRedPack" placeholder="上传图片或粘贴红包码链接">
+      </div>
+      <div id="uploadSectionCustom" class="hidden">
+        <p>上传或粘贴你的链接吧～</p>
+        <input type="file" id="fileInputCustom" accept="image/*">
+        <input type="text" id="linkInputCustom" placeholder="上传图片或粘贴二维码">
+      </div>
+      <button id="nextStep" disabled>生成</button>
+      <button onclick="location.reload()">返回</button>
     </div>
-    <div id="uploadSectionMiddle" class="hidden" style="height: 16px;"></div>
-    <div id="uploadSectionRedPack" class="hidden">
-      <p>上传或粘贴你的红包码吧～</p>
-      <p>仅支持碰一下收款码附带的红包码哦～</p>
-      <input type="file" id="fileInputRedPack" accept="image/*">
-      <input type="text" id="linkInputRedPack" placeholder="上传图片或粘贴红包码链接">
-    </div>
-    <div id="uploadSectionCustom" class="hidden">
-      <p>上传或粘贴你的链接吧～</p>
-      <input type="file" id="fileInputCustom" accept="image/*">
-      <input type="text" id="linkInputCustom" placeholder="上传图片或粘贴二维码">
-    </div>
-    <button id="nextStep" disabled>生成</button>
-    <button onclick="location.reload()">返回</button>
-  </div>
 
-  <div id="finalStep" class="hidden">
-    <p>大成功！现在可以戳我下载了喔～</p>
-    <button id="downloadBtn">下载标签文件</button>
-    <button onclick="location.reload()">再生一个</button>
-    <p>不会使用？我来助你！</p>
-    <ol>
-      <li>下载安装并运行 NFC Tools PRO，这还需要我教吗？</li>
-      <li>点击 写 => 更多的选择 导入Tag标签配置文件，选择你刚刚下载的文件！</li>
-      <li>导入后返回，选择 更多的选择 => 从配置文件加载Tag标签，就能看到生成的标签啦～</li>
-      <li>选择你想要写的标签，点击 加载新的列表！</li>
-      <li>然后点击写，开始狠狠写入！</li>
-      <li>要写入更多标签，只需要重复 3-5 即可喵！</li>
-    </ol>
+    <div id="finalStep" class="hidden">
+      <p>大成功！现在可以戳我下载了喔～</p>
+      <button id="downloadBtn">下载标签文件</button>
+      <button onclick="location.reload()">再生一个</button>
+      <p>不会使用？我来助你！</p>
+      <ol>
+        <li>下载安装并运行 NFC Tools PRO，这还需要我教吗？</li>
+        <li>点击 写 => 更多的选择 导入Tag标签配置文件，选择你刚刚下载的文件！</li>
+        <li>导入后返回，选择 更多的选择 => 从配置文件加载Tag标签，就能看到生成的标签啦～</li>
+        <li>选择你想要写的标签，点击 加载新的列表！</li>
+        <li>然后点击写，开始狠狠写入！</li>
+        <li>要写入更多标签，只需要重复 3-5 即可喵！</li>
+      </ol>
+    </div>
   </div>
 
   <!-- 添加的“领支付宝红包”链接，样式与按钮一致 -->
