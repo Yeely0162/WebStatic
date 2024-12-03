@@ -132,18 +132,20 @@
       max-width: 400px;
       margin: 10px auto;
       padding: 16px 20px;
-      background-color: #027AFF;
+      background-color: #ff6c00;
       color: #fff;
-      border: 1px solid #777;
       border-radius: 16px;
       text-decoration: none;
       cursor: pointer;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       flex-direction: column;
+      
     }
 
     .button-link:hover {
-      background-color: #005BBB;
+      background-color: #FF8C3D;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 108, 0, 0.2);
     }
 
     #footerLinks {
@@ -237,10 +239,10 @@
 <body>
   <div id="contentWrapper">
     <div id="buttonSection">
-      <p>欢迎喵！你要生成什么呢？</p>
-      <button id="paymentBtn">生成收款码</button>
-      <button id="redPacketBtn">生成红包码</button>
-      <button id="bothBtn">生成两个码</button>
+      <p style="align-items: center;justify-self: center;color: #005BBB;">Alipay碰一碰JSON生成器</p>
+      <button id="paymentBtn">生成收款标签</button>
+      <button id="redPacketBtn">生成红包标签</button>
+      <button id="bothBtn">生成两个标签</button>
       <p>要不...整点儿好玩的？</p>
       <button id="customBtn">自定义链接</button>
       <p>纯本地运行，不会上传你的数据！</p>
@@ -289,12 +291,12 @@
   </div>
 
   <!-- 添加的“领支付宝红包”链接，样式与按钮一致 -->
-  <a href="/paycode/AliPayRedPack.html" target="_blank" class="button-link">领支付宝红包</a>
+  <a href="/Flipper_NFC_Maker/index.html" target="_blank" class="button-link">FlipperZero NFC Maker</a>
 
   <!-- 页脚链接 -->
   <div id="footerLinks">
-    Powered&nbsp;by&nbsp;<a href="https://www.tomys.top/" target="_blank">TomyJan</a>
-    |&nbsp;<a href="https://github.com/TomyJan/WebStatic" target="_blank">GitHub</a>
+    Page Forked From &nbsp;by&nbsp;<a href="https://www.tomys.top/" target="_blank">TomyJan</a>
+    |&nbsp;<a href="https://github.com/Yeely0162/WebStatic" target="_blank">GitHub</a>
   </div>
 
   <script

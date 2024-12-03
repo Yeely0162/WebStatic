@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flipper Zero NFC Tag Generator</title>
+    <link href="styles.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <!-- Google Analytics -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKXZVMQ34Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NKXZVMQ34Z');
+    </script>
+    <canvas id="bgCanvas"></canvas>
+    <div class="container">
+        <header>
+            <img src="/Untitled-1.png" alt="Flipper Zero NFC 标签生成器" class="glitch-image">
+        </header>
+
+        <main>
+            <!-- NFC Tag Type Selection -->
+            <div class="input-group">
+                <label for="nfcTagTypeSelect">NFC 标签类型</label>
+                <select id="nfcTagTypeSelect">
+                    <option value="NTAG213">NTAG213</option>
+                    <option value="NTAG215" selected>NTAG215</option>
+                    <option value="NTAG216">NTAG216</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="tagType">标签功能</label>
+                <select id="tagType">
+                    <option value="URL">URL [iOS, Android]</option>
+                    <option value="Text">Plain Text [Android]</option>
+                    <option value="Phone">Phone Number [iOS, Android]</option>
+                    <option value="Email">Email [iOS, Android]</option>
+                    <option value="WiFi">Wi-Fi Configuration [Android]</option>
+                    <option value="Contact">Contact (vCard) [Android]</option>
+                    <option value="Geo">Geo Location [iOS, Android]</option>
+                    <option value="SMS">SMS Message [iOS, Android]</option>
+                    <option value="LaunchApp">Launch Application [Android]</option>
+                    <option value="CustomMIME">Custom MIME Type [Android]</option>
+                    <option value="SocialMedia">Social Media Link [iOS, Android]</option>
+                    <!-- New iOS-specific options -->
+                    <option value="FaceTime">FaceTime [iOS]</option>
+                    <option value="FaceTimeAudio">FaceTime Audio [iOS]</option>
+                    <option value="AppleMaps">Apple Maps [iOS]</option>
+                    <option value="HomeKit">HomeKit Setup [iOS]</option>
+
+                </select>
+            </div>
+
+            <!-- Dynamic Input Fields -->
+            <div id="inputFields">
+                <!-- FaceTime Input -->
+                <div class="input-group data-field" data-type="FaceTime FaceTimeAudio">
+                    <label for="facetimeInput">User Identifier (Email or Phone)</label>
+                    <input id="facetimeInput" type="text" placeholder="user@example.com">
+                </div>
+
+                <!-- Apple Maps Input -->
+                <div class="input-group data-field" data-type="AppleMaps">
+                    <label for="addressInput">Address</label>
+                    <input id="addressInput" type="text" placeholder="Apple Park, Cupertino, CA">
+                </div>
+
+                <!-- HomeKit Input -->
+                <div class="input-group data-field" data-type="HomeKit">
+                    <label for="homeKitCodeInput">HomeKit Code</label>
+                    <input id="homeKitCodeInput" type="text" placeholder="12345678">
+                </div>
+
+
+                <!-- URL Input -->
+                <div class="input-group data-field" data-type="URL SocialMedia">
+                    <label for="urlInput">URL</label>
+                    <input id="urlInput" type="text" placeholder="https://example.com">
+                </div>
+
+                <!-- Text Input -->
+                <div class="input-group data-field" data-type="Text">
+                    <label for="textInput">Text</label>
+                    <textarea id="textInput" placeholder="Enter your text here"></textarea>
+                </div>
+
+                <!-- Phone Number Input -->
+                <div class="input-group data-field" data-type="Phone">
+                    <label for="phoneInput">Phone Number</label>
+                    <input id="phoneInput" type="text" placeholder="+1234567890">
+                </div>
+
+                <!-- Email Input -->
+                <div class="input-group data-field" data-type="Email">
+                    <label for="emailInput">Email Address</label>
+                    <input id="emailInput" type="email" placeholder="example@example.com">
+                </div>
+
+                <!-- Wi-Fi Configuration Inputs -->
+                <div class="input-group data-field" data-type="WiFi">
+                    <label for="ssidInput">Wi-Fi SSID</label>
+                    <input id="ssidInput" type="text" placeholder="YourNetwork">
+                </div>
+                <div class="input-group data-field" data-type="WiFi">
+                    <label for="passwordInput">Wi-Fi Password</label>
+                    <input id="passwordInput" type="text" placeholder="YourPassword">
+                </div>
+                <div class="input-group data-field" data-type="WiFi">
+                    <label for="authTypeSelect">Authentication Type</label>
+                    <select id="authTypeSelect">
+                        <option value="WPA">WPA/WPA2</option>
+                        <option value="WEP">WEP</option>
+                        <option value="NONE">None</option>
+                    </select>
+                </div>
+
+                <!-- Contact Input -->
+                <div class="input-group data-field" data-type="Contact">
+                    <label for="contactInput">Contact (vCard)</label>
+                    <textarea id="contactInput" placeholder="BEGIN:VCARD...END:VCARD"></textarea>
+                </div>
+
+                <!-- Geo Location Inputs -->
+                <div class="input-group data-field" data-type="Geo">
+                    <label for="latitudeInput">Latitude</label>
+                    <input id="latitudeInput" type="text" placeholder="37.7749">
+                </div>
+                <div class="input-group data-field" data-type="Geo">
+                    <label for="longitudeInput">Longitude</label>
+                    <input id="longitudeInput" type="text" placeholder="-122.4194">
+                </div>
+
+                <!-- SMS Message Inputs -->
+                <div class="input-group data-field" data-type="SMS">
+                    <label for="smsNumberInput">Phone Number</label>
+                    <input id="smsNumberInput" type="text" placeholder="+1234567890">
+                </div>
+                <div class="input-group data-field" data-type="SMS">
+                    <label for="smsBodyInput">Message Body</label>
+                    <textarea id="smsBodyInput" placeholder="Hello World"></textarea>
+                </div>
+
+                <!-- Launch Application Input -->
+                <div class="input-group data-field" data-type="LaunchApp">
+                    <label for="packageNameInput">Package Name</label>
+                    <input id="packageNameInput" type="text" placeholder="com.example.myapp">
+                </div>
+
+                <!-- Custom MIME Type Inputs -->
+                <div class="input-group data-field" data-type="CustomMIME">
+                    <label for="mimeTypeInput">MIME Type</label>
+                    <input id="mimeTypeInput" type="text" placeholder="application/myapp">
+                </div>
+                <div class="input-group data-field" data-type="CustomMIME">
+                    <label for="mimeDataInput">Data</label>
+                    <textarea id="mimeDataInput" placeholder="Your custom data here"></textarea>
+                </div>
+            </div>
+
+            <button id="generateButton" class="btn">生成 NFC 标签</button>
+
+            <div id="outputSection" class="hidden">
+                <h2>已生成 NFC 标签数据</h2>
+                <pre id="nfcData"></pre>
+                <button id="downloadButton" class="btn">下载 .nfc 文件</button>
+            </div>
+        </main>
+
+        <footer>
+            <div id="footerLinks">
+                Page Forked From &nbsp;by&nbsp;<a href="https://github.com/jaylikesbunda/Flipper-NFC-Maker" target="_blank">jaylikesbunda</a>
+                |&nbsp;<a href="https://github.com/Yeely0162/WebStatic" target="_blank">GitHub</a>
+            </div>
+        </footer>
+    </div>
+    <script src="background.js"></script>
+    <script src="serial.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
