@@ -2,7 +2,7 @@
   "servers": [
     {
       "name": "DSM_SideStore",
-      "address": "https://https://at.yeelys.cn"
+      "address": "https://at.yeelys.cn"
     },
     {
       "name": "SideStore",
@@ -58,4 +58,5 @@
     }
   ],
   "cache": "https://servers.sidestore.io/servers.json.hash"
+
 }
