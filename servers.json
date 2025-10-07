@@ -1,0 +1,61 @@
+{
+  "servers": [
+    {
+      "name": "DSM_SideStore",
+      "address": "https://https://at.yeelys.cn"
+    },
+    {
+      "name": "SideStore",
+      "address": "https://ani.sidestore.io"
+    },
+    {
+      "name": "SideStore (.app)",
+      "address": "https://ani.sidestore.app"
+    },
+    {
+      "name": "SideStore (.zip)",
+      "address": "https://ani.sidestore.zip"
+    },
+    {
+      "name": "SideStore (.xyz)",
+      "address": "https://ani.846969.xyz"
+    },
+    {
+      "name": "nythepegasus",
+      "address": "https://ani.npeg.us"
+    },
+    {
+      "name": "Macley",
+      "address": "http://5.249.163.88:6969"
+    },
+    {
+      "name": "SeasiDev",
+      "address": "https://anisette.seasi.dev"
+    },
+    {
+      "name": "SteX",
+      "address": "https://ani.xu30.top"
+    },
+    {
+      "name": "owoellen",
+      "address": "https://ani.owoellen.rocks"
+    },
+    {
+      "name": "iDH Server",
+      "address": "https://ani.idevicehacked.com"
+    },
+    {
+      "name": "neoarz",
+      "address": "https://ani.neoarz.xyz"
+    },
+    {
+      "name": "pythonplayer123",
+      "address": "https://ani3server.fly.dev"
+    },
+    {
+      "name": "Jayden's Server",
+      "address": "https://ani.jaydenha.uk"
+    }
+  ],
+  "cache": "https://servers.sidestore.io/servers.json.hash"
+}
