@@ -5,7 +5,7 @@
       "address": "https://at.yeelys.cn"
     },
     {
-      "name": "Local——SideStore",
+      "name": "Local_SideStore",
       "address": "http://192.168.0.8:6969"
     },
     {
@@ -62,4 +62,5 @@
     }
   ],
   "cache": "https://servers.sidestore.io/servers.json.hash"
+
 }
